@@ -1,6 +1,25 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
+let $ = require('jquery');
+let printProds = require("./printToDom");
+
+module.exports.createDomElements = (prods) => {
+    console.log(prods);
+    let divCollection = [];
+    for (let i=0; i<prods.length; i++) {
+        // console.log(prods[i]);
+        let currentProd = prods[i];
+        let $newDiv = $(document.createElement('div'));
+        $newDiv.addClass(`${prods[i].catName}`).append(`<h2>${prods[i].prodName}</h2><h3>Product Type: ${prods[i].typeName}</h3><h4>Product Category: ${prods[i].catName}</h4><br><p>${prods[i].prodDescrip}</p>`);
+        console.log($newDiv);
+        divCollection.push($newDiv);
+            }
+    printProds.printToDom(divCollection);
+};
+},{"./printToDom":5,"jquery":6}],2:[function(require,module,exports){
+"use strict";
+
 const $ = require("jquery");
 
 module.exports.getCategories = () => {
@@ -42,26 +61,41 @@ module.exports.getProducts = () => {
     });
 };
 
-},{"jquery":5}],2:[function(require,module,exports){
+},{"jquery":6}],3:[function(require,module,exports){
 "use strict";
+
+let createDomElements = require(".//createDomElements");
 
 module.exports.formatData = (allData) => {
     let categories = allData[0];
     let products = allData[1];
     let types = allData[2];
-    console.log('categories', categories);
-    console.log('types', types);
-    console.log('products', products);
-    // products need to have type description and category name added to object
-    // match the product type to the type ID, and then add the category type name and type ID to the product object
+// loop through product array to access prod objects 
     for (let i = 0; i < products.length; i++) {
-        console.log(products[i]);
-        let productDetailsObj = Object.keys(products);
-        console.log("productdeets", productDetailsObj);
+        let currentProd = products[i];
+        // loop over prod object to access keys
+        for (let prod in currentProd) {
+            let currentProdType = currentProd[prod].type;
+            currentProd.prodName = currentProd[prod].name;
+            currentProd.prodDescrip = currentProd[prod].description;
+            // loop over types to match type id and prod type to get name of type as string
+            for (let i=0; i<types.length; i++) {
+                if ( currentProdType === types[i].id) {
+                    currentProd.typeName = types[i].name;
+                    currentProd.catID = types[i].category;
+                }
+            }
+            // loop over category array to access objects and match product type with category name as string
+            for (let i=0; i<categories.length; i++) {
+                if (categories[i].id === currentProd.catID) {
+                    currentProd.catName = categories[i].name;
+                }
+            }
+        }    
     }
-    // match the new type ID of the product to the category ID to get the category name
+    createDomElements.createDomElements(products);
 };
-},{}],3:[function(require,module,exports){
+},{".//createDomElements":1}],4:[function(require,module,exports){
 "use strict";
 
 let dataFactory = require(".//dataFactory");
@@ -81,11 +115,22 @@ dataFormatter.formatData(dataArr);
 });
 
 
-},{".//dataFactory":1,".//dataFormatter":2,".//printToDom":4,"jquery":5}],4:[function(require,module,exports){
+},{".//dataFactory":2,".//dataFormatter":3,".//printToDom":5,"jquery":6}],5:[function(require,module,exports){
 "use strict";
 
 let $ = require("jquery");
-},{"jquery":5}],5:[function(require,module,exports){
+
+module.exports.printToDom = (prodsToPrint) => {
+    $("#categories").change(() => {
+        console.log("ready to print", prodsToPrint);
+        let $selectedCat = $("#categories").val();
+        for (let i=0; i<prodsToPrint.length; i++) {
+            console.log(prodsToPrint[i]);
+            $("#products").append(prodsToPrint[i]);
+        }
+    });
+};
+},{"jquery":6}],6:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.2.1
  * https://jquery.com/
@@ -10340,4 +10385,4 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-},{}]},{},[3]);
+},{}]},{},[4]);
