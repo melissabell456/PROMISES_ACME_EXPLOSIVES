@@ -10,7 +10,7 @@ module.exports.createDomElements = (prods) => {
         // console.log(prods[i]);
         let currentProd = prods[i];
         let $newDiv = $(document.createElement('div'));
-        $newDiv.addClass(`${prods[i].catName}`).append(`<h2>${prods[i].prodName}</h2><h3>Product Type: ${prods[i].typeName}</h3><h4>Product Category: ${prods[i].catName}</h4><br><p>${prods[i].prodDescrip}</p>`);
+        $newDiv.addClass(`${prods[i].catName}`.toLowerCase()).append(`<h2>${prods[i].prodName}</h2><h3>Product Type: ${prods[i].typeName}</h3><h4>Product Category: ${prods[i].catName}</h4><br><p>${prods[i].prodDescrip}</p>`);
         console.log($newDiv);
         divCollection.push($newDiv);
             }
